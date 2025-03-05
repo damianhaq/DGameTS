@@ -1,4 +1,3 @@
-const num: number = 12;
-console.log(num);
+import { DGame } from "./DGame.js";
 
-const text: string = "test";
+const game = new DGame();
