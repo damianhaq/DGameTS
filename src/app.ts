@@ -34,5 +34,7 @@ game.draw = (deltaTime) => {
     false,
     counter
   );
+
+  draw.line(10, 10, 20, 20, true, "Red", 3);
   counter++;
 };

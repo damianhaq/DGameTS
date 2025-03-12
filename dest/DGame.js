@@ -260,6 +260,17 @@ export class Draw {
         this.context.strokeStyle = "black";
         this.context.lineWidth = 1;
     }
+    line(x1, y1, x2, y2, isOnMap = false, color = "black", lineWidth = 1) {
+        this.context.lineWidth = lineWidth;
+        this.context.strokeStyle = color;
+        this.context.beginPath();
+        this.context.moveTo(x1 - (isOnMap ? this.camera.x : 0), y1 - (isOnMap ? this.camera.y : 0));
+        this.context.lineTo(x2 - (isOnMap ? this.camera.x : 0), y2 - (isOnMap ? this.camera.y : 0));
+        this.context.stroke();
+        this.context.closePath();
+        this.context.strokeStyle = "black";
+        this.context.lineWidth = 1;
+    }
     degToRad(deg) {
         return (deg * Math.PI) / 180; // (0 * Math.PI) / 180 = 0
     }

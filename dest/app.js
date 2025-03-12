@@ -14,5 +14,6 @@ game.draw = (deltaTime) => {
     draw.text("asd", 7, 30, 30, true);
     draw.circle(30, 30, 10, true, "red", 1, false, 0, 300, true);
     draw.image("sprite", 0, 0, 60, 60, 30, 30, true, false, false, false, false, counter);
+    draw.line(10, 10, 20, 20, true, "Red", 3);
     counter++;
 };

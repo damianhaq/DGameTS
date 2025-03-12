@@ -414,6 +414,32 @@ export class Draw {
     this.context.lineWidth = 1;
   }
 
+  line(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    isOnMap: boolean = false,
+    color: string = "black",
+    lineWidth: number = 1
+  ) {
+    this.context.lineWidth = lineWidth;
+    this.context.strokeStyle = color;
+    this.context.beginPath();
+    this.context.moveTo(
+      x1 - (isOnMap ? this.camera.x : 0),
+      y1 - (isOnMap ? this.camera.y : 0)
+    );
+    this.context.lineTo(
+      x2 - (isOnMap ? this.camera.x : 0),
+      y2 - (isOnMap ? this.camera.y : 0)
+    );
+    this.context.stroke();
+    this.context.closePath();
+    this.context.strokeStyle = "black";
+    this.context.lineWidth = 1;
+  }
+
   private degToRad(deg: number): number {
     return (deg * Math.PI) / 180; // (0 * Math.PI) / 180 = 0
   }
