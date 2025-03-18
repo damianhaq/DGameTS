@@ -47,33 +47,4 @@ export class Map {
             this.draw.line(0, this.cellLength * j, this.cellsY * this.cellLength, this.cellLength * j, true);
         }
     }
-    drawBuildings() {
-        this.map.forEach((row, y) => {
-            row.forEach((cell, x) => {
-                if (cell) {
-                    this.outlineCell(x, y, 2, "black");
-                }
-            });
-        });
-    }
-    outlineCell(cellX, cellY, lineWidth, color) {
-        const cornerRadius = this.cellLength / 10;
-        this.drawHorizontalLines(cellX, cellY, cornerRadius, lineWidth, color);
-        this.drawVerticalLines(cellX, cellY, cornerRadius, lineWidth, color);
-        this.drawCornerCircles(cellX, cellY, cornerRadius, lineWidth, color);
-    }
-    drawHorizontalLines(cellX, cellY, cornerRadius, lineWidth, color) {
-        this.draw.line(cellX * this.cellLength + cornerRadius, cellY * this.cellLength, cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength, true, color, lineWidth);
-        this.draw.line(cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength + this.cellLength, cellX * this.cellLength + cornerRadius, cellY * this.cellLength + this.cellLength, true, color, lineWidth);
-    }
-    drawVerticalLines(cellX, cellY, cornerRadius, lineWidth, color) {
-        this.draw.line(cellX * this.cellLength + this.cellLength, cellY * this.cellLength + cornerRadius, cellX * this.cellLength + this.cellLength, cellY * this.cellLength + this.cellLength - cornerRadius, true, color, lineWidth);
-        this.draw.line(cellX * this.cellLength, cellY * this.cellLength + this.cellLength - cornerRadius, cellX * this.cellLength, cellY * this.cellLength + cornerRadius, true, color, lineWidth);
-    }
-    drawCornerCircles(cellX, cellY, cornerRadius, lineWidth, color) {
-        this.draw.circle(cellX * this.cellLength + cornerRadius, cellY * this.cellLength + cornerRadius, cornerRadius, true, color, lineWidth, false, 180, 270, false);
-        this.draw.circle(cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength + cornerRadius, cornerRadius, true, color, lineWidth, false, 270, 0, false);
-        this.draw.circle(cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength + this.cellLength - cornerRadius, cornerRadius, true, color, lineWidth, false, 0, 90, false);
-        this.draw.circle(cellX * this.cellLength + cornerRadius, cellY * this.cellLength + this.cellLength - cornerRadius, cornerRadius, true, color, lineWidth, false, 90, 180, false);
-    }
 }

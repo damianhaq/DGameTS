@@ -5,10 +5,9 @@ import { Map } from "./DGame/Map.js";
 
 const game = new DGame(1, 1000, 600);
 const draw = new Draw(game.context, game.camera);
-const map = new Map(10, 10, 140, game, draw);
+const map = new Map(10, 10, 80, game, draw);
 
-// draw.addImage("./assets/BigSpritev7.png", "sprite");
-// console.log(draw);
+const buildings: Building[] = [];
 
 game.enableMoveCameraRMB();
 
@@ -37,15 +36,36 @@ game.onMouseWheel = (e) => {
   // console.log("zoom, cellLength", GAME.cellLength);
 };
 
-const building = new Building(
+const building1 = new Building(
   [
     { cellX: 2, cellY: 2 },
     { cellX: 2, cellY: 3 },
+
+    { cellX: 3, cellY: 3 },
   ],
-  0
+  0,
+  "red",
+  draw,
+  map
+);
+const building2 = new Building(
+  [
+    { cellX: 2, cellY: 1 },
+    { cellX: 1, cellY: 1 },
+    { cellX: 1, cellY: 2 },
+    // { cellX: 3, cellY: 3 },
+  ],
+  0,
+  "blue",
+  draw,
+  map
 );
 
-map.addBuilding(building);
+buildings.push(building1, building2);
+console.log("buildings: ", buildings);
+
+map.addBuilding(building1);
+map.addBuilding(building2);
 
 game.onClickLMB = () => {
   const cellCords = map.getCellCords(
@@ -71,6 +91,8 @@ game.onClickLMB = () => {
 
 game.draw = (deltaTime) => {
   map.drawGrid();
-  map.drawBuildings();
+
+  buildings.forEach((el) => el.drawBuilding());
+
   // map.outlineCell(3, 1, 3, "red");
 };
