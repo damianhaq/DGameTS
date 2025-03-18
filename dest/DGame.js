@@ -24,12 +24,22 @@ export class DGame {
             x: 0,
             y: 0,
         };
+        this.infoDebug = ["infoDebug"];
         this.createCanvas(width, height);
         this.setupCanvas();
         this.setupEventListeners();
+        // this.createInfoDiv();
         // start game loop
         requestAnimationFrame(this.gameLoop.bind(this));
     }
+    // private createInfoDiv() {
+    //   const div = document.createElement("div");
+    //   document.body.appendChild(div);
+    //   const label = document.createElement("label");
+    //   label.textContent = "asd";
+    //   div.appendChild(label);
+    // }
+    // addInfoDebug(text: string, variable: any = "") {}
     enableMoveCameraRMB() {
         this.isMoveCameraRMB = true;
     }
@@ -129,6 +139,7 @@ export class DGame {
         const deltaTime = +(timestamp - this.lastTime).toFixed(2);
         this.lastTime = timestamp;
         const fps = 1000 / deltaTime;
+        this.mouseHandleClick();
         this.update(deltaTime);
         this.draw(deltaTime);
         this.context.fillStyle = "black";
@@ -138,6 +149,26 @@ export class DGame {
         if (this.isMoveCameraRMB)
             this.moveCameraRMB();
         requestAnimationFrame(this.gameLoop.bind(this));
+    }
+    mouseHandleClick() {
+        // execute once if mouse is pressed
+        if (this.mouse.LMB && !this.mouse.LMBClickFlag) {
+            this.mouse.LMBClickFlag = true;
+            // execute once if mouse is pressed
+            this.onClickLMB();
+        }
+        else if (!this.mouse.LMB && this.mouse.LMBClickFlag) {
+            this.mouse.LMBClickFlag = false;
+            // execute once if mouse is unpressed
+            this.onUnclickLMB();
+        }
+        // execute every mouse move
+        if (this.mouse.x !== this.mouse.mouseMoveLastPosition.x ||
+            this.mouse.y !== this.mouse.mouseMoveLastPosition.y) {
+            this.onMouseMove();
+            this.mouse.mouseMoveLastPosition.x = this.mouse.x;
+            this.mouse.mouseMoveLastPosition.y = this.mouse.y;
+        }
     }
     addImage(image) {
         this.image = image;
@@ -273,5 +304,140 @@ export class Draw {
     }
     degToRad(deg) {
         return (deg * Math.PI) / 180; // (0 * Math.PI) / 180 = 0
+    }
+}
+export class Map {
+    constructor(cellsX, cellsY, cellLength, game, draw) {
+        this.cellsX = cellsX;
+        this.cellsY = cellsY;
+        this.cellLength = cellLength;
+        this.game = game;
+        this.draw = draw;
+        this.map = this.createMap();
+    }
+    addBuilding(building) {
+        building.posCells.forEach((cell) => {
+            const isInMap = cell.cellX >= 0 &&
+                cell.cellX < this.cellsX &&
+                cell.cellY >= 0 &&
+                cell.cellY < this.cellsY;
+            if (isInMap) {
+                this.map[cell.cellY][cell.cellX] = building;
+            }
+        });
+    }
+    getCellCords(x, y, camera, cellLength) {
+        const cellX = Math.floor((x + camera.x) / cellLength);
+        const cellY = Math.floor((y + camera.y) / cellLength);
+        return { cellX, cellY };
+    }
+    getCell(cellX, cellY) {
+        return this.map[cellY][cellX];
+    }
+    createMap(fill = null) {
+        // create 2d array
+        const map = [];
+        for (let i = 0; i < this.cellsX; i++) {
+            const row = [];
+            for (let j = 0; j < this.cellsY; j++) {
+                row.push(fill);
+            }
+            map.push(row);
+        }
+        console.log("map created:", map);
+        return map;
+    }
+    drawGrid() {
+        for (let i = 0; i < this.cellsX + 1; i++) {
+            this.draw.line(this.cellLength * i, 0, this.cellLength * i, this.cellLength * this.cellsX, true);
+        }
+        for (let j = 0; j < this.cellsY + 1; j++) {
+            this.draw.line(0, this.cellLength * j, this.cellsY * this.cellLength, this.cellLength * j, true);
+        }
+    }
+    drawBuildings() {
+        this.map.forEach((row, y) => {
+            row.forEach((cell, x) => {
+                if (cell) {
+                    this.outlineCell(x, y, 2, "black");
+                }
+            });
+        });
+    }
+    outlineCell(cellX, cellY, lineWidth, color) {
+        const cornerRadius = this.cellLength / 10;
+        this.drawHorizontalLines(cellX, cellY, cornerRadius, lineWidth, color);
+        this.drawVerticalLines(cellX, cellY, cornerRadius, lineWidth, color);
+        this.drawCornerCircles(cellX, cellY, cornerRadius, lineWidth, color);
+    }
+    drawHorizontalLines(cellX, cellY, cornerRadius, lineWidth, color) {
+        this.draw.line(cellX * this.cellLength + cornerRadius, cellY * this.cellLength, cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength, true, color, lineWidth);
+        this.draw.line(cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength + this.cellLength, cellX * this.cellLength + cornerRadius, cellY * this.cellLength + this.cellLength, true, color, lineWidth);
+    }
+    drawVerticalLines(cellX, cellY, cornerRadius, lineWidth, color) {
+        this.draw.line(cellX * this.cellLength + this.cellLength, cellY * this.cellLength + cornerRadius, cellX * this.cellLength + this.cellLength, cellY * this.cellLength + this.cellLength - cornerRadius, true, color, lineWidth);
+        this.draw.line(cellX * this.cellLength, cellY * this.cellLength + this.cellLength - cornerRadius, cellX * this.cellLength, cellY * this.cellLength + cornerRadius, true, color, lineWidth);
+    }
+    drawCornerCircles(cellX, cellY, cornerRadius, lineWidth, color) {
+        this.draw.circle(cellX * this.cellLength + cornerRadius, cellY * this.cellLength + cornerRadius, cornerRadius, true, color, lineWidth, false, 180, 270, false);
+        this.draw.circle(cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength + cornerRadius, cornerRadius, true, color, lineWidth, false, 270, 0, false);
+        this.draw.circle(cellX * this.cellLength + this.cellLength - cornerRadius, cellY * this.cellLength + this.cellLength - cornerRadius, cornerRadius, true, color, lineWidth, false, 0, 90, false);
+        this.draw.circle(cellX * this.cellLength + cornerRadius, cellY * this.cellLength + this.cellLength - cornerRadius, cornerRadius, true, color, lineWidth, false, 90, 180, false);
+    }
+}
+export class Resource {
+}
+export class Building {
+    constructor(posCells, id) {
+        this.posCells = posCells;
+        this.id = id;
+        this.isCellsCorrect(posCells);
+    }
+    // TODO: po id wiadomo jakie kratki są razem, napisz połączone rysowanie
+    isCellsCorrect(arr) {
+        let correct = true;
+        if (arr.length !== 1) {
+            arr.forEach((cell) => {
+                const neig = this.check4Neighbors(cell, arr);
+                if (neig.isTop || neig.isRight || neig.isBottom || neig.isLeft) {
+                    console.log("correct cell");
+                }
+                else {
+                    correct = false;
+                    console.warn("incorrect cell");
+                }
+            });
+        }
+        return correct;
+    }
+    check4Neighbors(cell, arr) {
+        let isTop = false;
+        let isRight = false;
+        let isBottom = false;
+        let isLeft = false;
+        arr.forEach((neig) => {
+            if (cell.cellX === neig.cellX && cell.cellY === neig.cellY) {
+                // cell is neig
+            }
+            else {
+                // check top
+                if (cell.cellX === neig.cellX && cell.cellY === neig.cellY + 1) {
+                    isTop = true;
+                }
+                // right
+                if (cell.cellX === neig.cellX - 1 && cell.cellY === neig.cellY) {
+                    isRight = true;
+                }
+                // bottom
+                if (cell.cellX === neig.cellX && cell.cellY === neig.cellY - 1) {
+                    isBottom = true;
+                }
+                // left
+                if (cell.cellX === neig.cellX + 1 && cell.cellY === neig.cellY) {
+                    isLeft = true;
+                }
+            }
+        });
+        return { isTop, isRight, isBottom, isLeft };
     }
 }
