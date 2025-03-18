@@ -1,4 +1,7 @@
-import { Building, DGame, Draw, Map } from "./DGame.js";
+import { Building } from "./DGame/Building.js";
+import { DGame } from "./DGame/DGame.js";
+import { Draw } from "./DGame/Draw.js";
+import { Map } from "./DGame/Map.js";
 
 const game = new DGame(1, 1000, 600);
 const draw = new Draw(game.context, game.camera);
