@@ -1,3 +1,4 @@
+import { GAME } from "../gameVariables";
 import { Draw } from "./Draw";
 import { Map } from "./Map";
 
@@ -6,7 +7,7 @@ export class Building {
   id: number;
   color: string;
   private draw: Draw;
-  private map: Map;
+  private gameVariables: GAME;
   private lineWidth: number;
 
   constructor(
@@ -14,14 +15,14 @@ export class Building {
     id: number,
     color: string,
     draw: Draw,
-    map: Map
+    gameVariables: GAME
   ) {
     this.posCells = posCells;
     this.id = id;
     this.color = color;
     this.draw = draw;
-    this.map = map;
-    this.lineWidth = 4;
+    this.gameVariables = gameVariables;
+    this.lineWidth = 2;
 
     this.isCellsCorrect(posCells);
     this.drawBuilding();
@@ -51,20 +52,32 @@ export class Building {
   ) {
     // points in corners
     const p1 = {
-      x: cellX * this.map.cellLength + this.lineWidth / 2,
-      y: cellY * this.map.cellLength + this.lineWidth / 2,
+      x: cellX * this.gameVariables.map.cellLength + this.lineWidth / 2,
+      y: cellY * this.gameVariables.map.cellLength + this.lineWidth / 2,
     };
     const p2 = {
-      x: cellX * this.map.cellLength + this.map.cellLength - this.lineWidth / 2,
-      y: cellY * this.map.cellLength + this.lineWidth / 2,
+      x:
+        cellX * this.gameVariables.map.cellLength +
+        this.gameVariables.map.cellLength -
+        this.lineWidth / 2,
+      y: cellY * this.gameVariables.map.cellLength + this.lineWidth / 2,
     };
     const p3 = {
-      x: cellX * this.map.cellLength + this.map.cellLength - this.lineWidth / 2,
-      y: cellY * this.map.cellLength + this.map.cellLength - this.lineWidth / 2,
+      x:
+        cellX * this.gameVariables.map.cellLength +
+        this.gameVariables.map.cellLength -
+        this.lineWidth / 2,
+      y:
+        cellY * this.gameVariables.map.cellLength +
+        this.gameVariables.map.cellLength -
+        this.lineWidth / 2,
     };
     const p4 = {
-      x: cellX * this.map.cellLength + this.lineWidth / 2,
-      y: cellY * this.map.cellLength + this.map.cellLength - this.lineWidth / 2,
+      x: cellX * this.gameVariables.map.cellLength + this.lineWidth / 2,
+      y:
+        cellY * this.gameVariables.map.cellLength +
+        this.gameVariables.map.cellLength -
+        this.lineWidth / 2,
     };
 
     if (isTop) {
